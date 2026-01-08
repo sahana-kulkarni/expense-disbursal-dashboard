@@ -1,73 +1,81 @@
-# React + TypeScript + Vite
+# Enterprise Expense & Disbursal Management Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A frontend-focused dashboard that supports expense review workflows (Pending → Approved/Rejected) with a lightweight Node.js/Express API. Built to demonstrate production UI patterns such as server-state management, conditional actions, loading/error states, and clean architecture.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend:** React, TypeScript, Tailwind CSS, React Router, React Query, Axios
+- **Backend:** Node.js, Express, CORS
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Expense dashboard UI with table view
+- Status workflow: **PENDING → APPROVED / REJECTED**
+- Conditional rendering of actions based on status
+- Server-state management using **React Query** with query invalidation after mutations
+- Filters by status + pagination skeleton (UI)
 
-## Expanding the ESLint configuration
+## Screenshots
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+> Add 1–2 screenshots here (Dashboard + Expenses table)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- `screenshots/dashboard.png`
+- `screenshots/expenses.png`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1) Clone
+
+```bash
+git clone <your-repo-url>
+cd expense-disbursal-dashboard
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2) Run Backend (Express)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd server
+npm install
+npm run dev
 ```
+
+Backend runs on: http://localhost:4000
+
+### 3) Run Frontend (Vite)
+
+```bash
+cd expense-disbursal-dashboard
+npm install
+npm run dev
+```
+
+Frontend runs on: http://localhost:5173
+
+### API Endpoints
+
+- GET /api/expenses – fetch all expenses
+- PATCH /api/expenses/:id – update expense status
+  Body:
+
+```json
+{ "status": "APPROVED" }
+```
+
+---
+
+## Notes
+
+- Backend uses in-memory data storage for simplicity.
+- The project is designed to highlight frontend architecture and workflow handling.
+- Persistent storage, authentication, and server-side pagination are intentionally out of scope.
+
+---
+
+## Why This Project
+
+This project was built to demonstrate real-world frontend engineering practices, including:
+
+- Clean component and folder architecture
+- Clear separation of server state and UI state
+- Controlled UI workflows based on business rules
+- Robust REST API integration with proper loading and error handling
