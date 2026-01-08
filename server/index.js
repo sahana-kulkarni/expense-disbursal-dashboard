@@ -28,11 +28,16 @@ app.get("/api/expenses", (req, res) => {
   res.json(expenses);
 });
 
-console.log(expenses);
-
-app.patch("/expenses/:id", (req, res) => {
+app.patch("/api/expenses/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const { status } = req.body;
+
+  const normalized = String(status).toUpperCase();
+
+  const allowed = ["PENDING", "APPROVED", "REJECTED", "PAID"];
+  if (!allowed.includes(normalized)) {
+    return res.status(400).json({ message: "Invalid status value" });
+  }
 
   const expense = expenses.find((e) => Number(e.id) === id);
 
@@ -40,7 +45,7 @@ app.patch("/expenses/:id", (req, res) => {
     return res.status(404).json({ message: "Expense not found" });
   }
 
-  expense.status = status;
+  expense.status = normalized;
   res.json(expense);
 });
 

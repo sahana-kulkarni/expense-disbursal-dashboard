@@ -13,6 +13,7 @@ export default function ExpenseFilters({ onFilter }: Props) {
         <option value="PENDING">Pending</option>
         <option value="APPROVED">Approved</option>
         <option value="PAID">Paid</option>
+        <option value="REJECTED">Rejected</option>
       </select>
     </div>
   );

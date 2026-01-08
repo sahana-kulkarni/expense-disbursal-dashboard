@@ -3,16 +3,42 @@ import { useExpenses } from "../../hooks/useExpenses";
 import StatusBadge from "../common/StatusBadge";
 import Loader from "../common/Loader";
 import ExpenseFilters from "./ExpenseFilters";
+import { updateExpenseStatus } from "../../api/expenseApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ExpenseTable() {
-  const { data, isLoading, error } = useExpenses();
+  const queryClient = useQueryClient();
+  const { data, isLoading, error: expenseError } = useExpenses();
 
   const [status, setStatus] = useState("");
+  const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [error, setError] = useState("");
 
   const filtered = status ? data?.filter((e) => e.status === status) : data;
 
+  const handleStatusChange = async (
+    id: number,
+    status: "APPROVED" | "REJECTED"
+  ) => {
+    try {
+      setLoadingId(id);
+      setError("");
+
+      await updateExpenseStatus(id, status);
+
+      queryClient.invalidateQueries({
+        queryKey: ["expenses"],
+      });
+    } catch {
+      setError("Unable to update status");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
   if (isLoading) return <Loader />;
-  if (error) return <p className="text-red-500">Failed to load expenses</p>;
+  if (expenseError)
+    return <p className="text-red-500">Failed to load expenses</p>;
 
   return (
     <>
@@ -26,6 +52,7 @@ export default function ExpenseTable() {
               <th className="p-3 text-left">Amount</th>
               <th className="p-3 text-left">Status</th>
               <th className="p-3 text-left">Created</th>
+              <th className="p-3 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -33,11 +60,38 @@ export default function ExpenseTable() {
               <tr key={exp.id} className="border-t">
                 <td className="p-3">{exp.title}</td>
                 <td className="p-3">{exp.category}</td>
-                <td className="=p-3">{exp.amount}</td>
+                <td className="p-3">{exp.amount}</td>
                 <td className="p-3">
                   <StatusBadge status={exp.status} />
                 </td>
                 <td className="p-3">{exp.createdAt}</td>
+                <td className="p-3 flex gap-2">
+                  {exp.status === "PENDING" && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          handleStatusChange(Number(exp.id), "APPROVED")
+                        }
+                        disabled={loadingId === Number(exp.id)}
+                        className="px-3 py-1 text-xs bg-green-600 text-white rounded disabled:opacity-50"
+                      >
+                        {loadingId === Number(exp.id)
+                          ? "Updating..."
+                          : "Approve"}
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          handleStatusChange(Number(exp.id), "REJECTED")
+                        }
+                        disabled={loadingId === Number(exp.id)}
+                        className="px-3 py-1 text-xs bg-red-600 text-white rounded disabled:opacity-50"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -46,6 +100,7 @@ export default function ExpenseTable() {
           <button className="px-3 py-1 border rounded">Prev</button>
           <button className="px-3 py-1 border rounded">Next</button>
         </div>
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </div>
     </>
   );
