@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { prisma } from "../../db/prisma";
 
 const users: any[] = [];
 
@@ -9,18 +10,21 @@ export const authService = {
   async register(email: string, password: string) {
     const hashed = await bcrypt.hash(password, 10);
 
-    const user = {
-      id: crypto.randomUUID(),
-      email,
-      password: hashed,
-    };
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashed,
+      },
+    });
 
     users.push(user);
     return { id: user.id, email: user.email };
   },
 
   async login(email: string, password: string) {
-    const user = users.find((u) => u.email === email);
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
     if (!user) return null;
 
     const isMatch = await bcrypt.compare(password, user.password);

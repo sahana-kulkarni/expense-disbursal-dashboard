@@ -1,8 +1,13 @@
 import type { Request, Response } from "express";
 import { expensesService } from "./expenses.service";
+import { AuthedRequest } from "../../types/auth";
 
-export function getExpenses(_req: Request, res: Response) {
-  return res.json(expensesService.list());
+export async function getExpenses(_req: AuthedRequest, res: Response) {
+  const userId = _req.user?.userId;
+  if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+  const rows = await expensesService.list(userId);
+  return res.json(rows);
 }
 
 export function patchExpenseStatus(req: Request, res: Response) {

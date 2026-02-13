@@ -1,3 +1,5 @@
+import { prisma } from "../../db/prisma";
+
 type Status = "PENDING" | "APPROVED" | "REJECTED";
 
 type Expense = {
@@ -13,8 +15,20 @@ const db: Expense[] = [
 ];
 
 export const expensesService = {
-  list(): Expense[] {
-    return db;
+  async list(userId: string) {
+    return prisma.expense.findMany({
+      where: { userId },
+    });
+  },
+
+  async create(userId: string, title: string, amount: number) {
+    return prisma.expense.create({
+      data: {
+        title,
+        amount,
+        userId,
+      },
+    });
   },
 
   updateStatus(id: string, status: Status) {
