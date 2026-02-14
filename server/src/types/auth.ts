@@ -5,6 +5,7 @@ export type AuthUser = {
   email: string;
   iat?: number;
   exp?: number;
+  role: "USER" | "MANAGER" | "ADMIN";
 };
 
 export type AuthedRequest = Request & { user?: AuthUser };

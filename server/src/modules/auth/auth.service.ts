@@ -30,9 +30,13 @@ export const authService = {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return null;
 
-    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      JWT_SECRET,
+      {
+        expiresIn: "1h",
+      },
+    );
     return { token };
   },
 };

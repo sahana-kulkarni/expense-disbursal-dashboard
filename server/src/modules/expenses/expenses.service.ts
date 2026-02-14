@@ -27,14 +27,24 @@ export const expensesService = {
         title,
         amount,
         userId,
+        status: "PENDING",
       },
     });
   },
 
-  updateStatus(id: string, status: Status) {
-    const row = db.find((e) => e.id === id);
-    if (!row) return null;
-    row.status = status;
-    return row;
+  async updateStatus(expenseId: string, status: "APPROVED" | "REJECTED") {
+    const expense = await prisma.expense.findUnique({
+      where: { id: expenseId },
+    });
+    if (!expense) return null;
+
+    if (expense.status !== "PENDING") {
+      throw new Error("Only PENDING expenses can be updated");
+    }
+
+    return prisma.expense.update({
+      where: { id: expenseId },
+      data: { status },
+    });
   },
 };

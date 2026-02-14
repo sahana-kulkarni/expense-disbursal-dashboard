@@ -11,6 +11,7 @@ model User {
   id        String    @id @default(uuid())
   email     String    @unique
   password  String
+  role      Role      @default(USER)
   createdAt DateTime  @default(now())
 
   expenses  Expense[]
@@ -31,4 +32,10 @@ enum Status {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum Role {
+  USER
+  MANAGER
+  ADMIN
 }
