@@ -1,19 +1,5 @@
 import { prisma } from "../../db/prisma";
 
-type Status = "PENDING" | "APPROVED" | "REJECTED";
-
-type Expense = {
-  id: string;
-  title: string;
-  amount: number;
-  status: Status;
-};
-
-const db: Expense[] = [
-  { id: "1", title: "Flight", amount: 420, status: "PENDING" },
-  { id: "2", title: "Hotel", amount: 780, status: "APPROVED" },
-];
-
 export const expensesService = {
   async list(userId: string) {
     return prisma.expense.findMany({
@@ -32,7 +18,12 @@ export const expensesService = {
     });
   },
 
-  async updateStatus(expenseId: string, status: "APPROVED" | "REJECTED") {
+  async updateStatus(
+    expenseId: string,
+    actorId: string,
+    toStatus: "APPROVED" | "REJECTED",
+    reason?: string,
+  ) {
     const expense = await prisma.expense.findUnique({
       where: { id: expenseId },
     });
@@ -42,9 +33,40 @@ export const expensesService = {
       throw new Error("Only PENDING expenses can be updated");
     }
 
-    return prisma.expense.update({
+    const fromStatus = expense.status;
+
+    const [updated] = await prisma.$transaction([
+      prisma.expense.update({
+        where: { id: expenseId },
+        data: { status: toStatus },
+      }),
+      prisma.expenseAudit.create({
+        data: {
+          expenseId,
+          actorId,
+          fromStatus,
+          toStatus,
+          reason,
+        },
+      }),
+    ]);
+
+    return updated;
+  },
+
+  async getAudits(expenseId: string) {
+    return prisma.expenseAudit.findMany({
+      where: { expenseId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        actor: { select: { id: true, email: true, role: true } },
+      },
+    });
+  },
+
+  async getExpenseById(expenseId: string) {
+    return prisma.expense.findUnique({
       where: { id: expenseId },
-      data: { status },
     });
   },
 };

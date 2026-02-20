@@ -15,6 +15,7 @@ model User {
   createdAt DateTime  @default(now())
 
   expenses  Expense[]
+  audits    ExpenseAudit[]
 }
 
 model Expense {
@@ -26,6 +27,24 @@ model Expense {
 
   userId    String
   user      User      @relation(fields: [userId], references: [id])
+
+  audits    ExpenseAudit[]
+}
+
+model ExpenseAudit {
+  id         String   @id @default(uuid())
+  expenseId  String
+  actorId    String
+  fromStatus Status
+  toStatus   Status
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  expense    Expense  @relation(fields: [expenseId], references: [id])
+  actor      User     @relation(fields: [actorId], references: [id])
+
+  @@index([expenseId])
+  @@index([actorId])
 }
 
 enum Status {
