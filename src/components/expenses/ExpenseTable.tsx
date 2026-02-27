@@ -11,14 +11,14 @@ export default function ExpenseTable() {
   const { data, isLoading, error: expenseError } = useExpenses();
 
   const [status, setStatus] = useState("");
-  const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const filtered = status ? data?.filter((e) => e.status === status) : data;
 
   const handleStatusChange = async (
-    id: number,
-    status: "APPROVED" | "REJECTED"
+    id: string,
+    status: "APPROVED" | "REJECTED",
   ) => {
     try {
       setLoadingId(id);
@@ -69,22 +69,16 @@ export default function ExpenseTable() {
                   {exp.status === "PENDING" && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() =>
-                          handleStatusChange(Number(exp.id), "APPROVED")
-                        }
-                        disabled={loadingId === Number(exp.id)}
+                        onClick={() => handleStatusChange(exp.id, "APPROVED")}
+                        disabled={loadingId === exp.id}
                         className="px-3 py-1 text-xs bg-green-600 text-white rounded disabled:opacity-50"
                       >
-                        {loadingId === Number(exp.id)
-                          ? "Updating..."
-                          : "Approve"}
+                        {loadingId === exp.id ? "Updating..." : "Approve"}
                       </button>
 
                       <button
-                        onClick={() =>
-                          handleStatusChange(Number(exp.id), "REJECTED")
-                        }
-                        disabled={loadingId === Number(exp.id)}
+                        onClick={() => handleStatusChange(exp.id, "REJECTED")}
+                        disabled={loadingId === exp.id}
                         className="px-3 py-1 text-xs bg-red-600 text-white rounded disabled:opacity-50"
                       >
                         Reject
