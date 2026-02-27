@@ -1,6 +1,9 @@
 # Enterprise Expense & Disbursal Management Dashboard
 
-A frontend-focused dashboard that supports expense review workflows (Pending → Approved/Rejected) with a lightweight Node.js/Express API. Built to demonstrate production UI patterns such as server-state management, conditional actions, loading/error states, and clean architecture.
+A frontend-heavy full-stack dashboard that supports an expense review workflow (**PENDING → APPROVED/REJECTED**) with a lightweight **Node.js/Express** API.  
+Built to demonstrate production UI patterns: server-state management, conditional actions, loading/error states, and clean architecture.
+
+**Live Demo:** https://expense-disbursal-dashboard.vercel.app
 
 ## Tech Stack
 
@@ -27,7 +30,7 @@ A frontend-focused dashboard that supports expense review workflows (Pending →
 ### 1) Clone
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/sahana-kulkarni/expense-disbursal-dashboard.git
 cd expense-disbursal-dashboard
 ```
 
