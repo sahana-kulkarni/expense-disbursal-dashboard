@@ -4,6 +4,7 @@ import { env } from "./config/env";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { expensesRouter } from "./modules/expenses/expenses.routes";
 import { authRouter } from "./modules/auth/auth.routes";
+import { devSeedRouter } from "./routes/dev.seed.route";
 
 export function createApp() {
   const app = express();
@@ -16,6 +17,10 @@ export function createApp() {
   app.use("/api/auth", authRouter);
 
   app.use("/api/expenses", expensesRouter);
+
+  if (env.SEED_SECRET) {
+    app.use("/api/dev", devSeedRouter);
+  }
 
   app.use(errorMiddleware);
   return app;

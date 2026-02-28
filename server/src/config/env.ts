@@ -5,4 +5,7 @@ export const env = {
   PORT: Number(process.env.PORT ?? 4000),
   CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:5173",
   NODE_ENV: process.env.NODE_ENV ?? "development",
+
+  JWT_SECRET: process.env.JWT_SECRET ?? "",
+  SEED_SECRET: process.env.SEED_SECRET ?? "",
 };
