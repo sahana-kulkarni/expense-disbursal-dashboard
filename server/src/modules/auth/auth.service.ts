@@ -1,10 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../db/prisma";
+import { env } from "../../config/env";
 
 const users: any[] = [];
 
-const JWT_SECRET = "dev-secret";
+const JWT_SECRET = env.JWT_SECRET || "dev-secret";
 
 export const authService = {
   async register(email: string, password: string) {
@@ -37,6 +38,13 @@ export const authService = {
         expiresIn: "1h",
       },
     );
-    return { token };
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+    };
   },
 };

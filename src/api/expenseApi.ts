@@ -10,6 +10,10 @@ const getToken = () => localStorage.getItem("token");
 export const fetchExpenses = async (): Promise<Expense[]> => {
   const token = getToken();
 
+  if (!token) {
+    throw new Error("No auth token found");
+  }
+
   const res = await axios.get(`${API_BASE_URL}/expenses`, {
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
@@ -18,6 +22,10 @@ export const fetchExpenses = async (): Promise<Expense[]> => {
 
 export const updateExpenseStatus = async (id: string, status: string) => {
   const token = getToken();
+
+  if (!token) {
+    throw new Error("No auth token found");
+  }
 
   const response = await fetch(`${API_BASE_URL}/expenses/${id}/status`, {
     method: "PATCH",
