@@ -3,12 +3,14 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Expenses from "../pages/Expenses";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
+import Register from "../pages/Register";
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
           element={
