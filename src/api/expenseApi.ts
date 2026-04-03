@@ -7,31 +7,45 @@ const API_BASE_URL =
 
 const getToken = () => localStorage.getItem("token");
 
-export const fetchExpenses = async (): Promise<Expense[]> => {
+function getAuthHeaders() {
   const token = getToken();
 
   if (!token) {
     throw new Error("No auth token found");
   }
 
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+export const fetchExpenses = async (): Promise<Expense[]> => {
   const res = await axios.get(`${API_BASE_URL}/expenses`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    headers: getAuthHeaders(),
   });
   return res.data;
 };
 
+export const createExpense = async (payload: {
+  title: string;
+  amount: number;
+}): Promise<Expense> => {
+  const res = await axios.post(`${API_BASE_URL}/expenses`, payload, {
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+    },
+  });
+
+  return res.data;
+};
+
 export const updateExpenseStatus = async (id: string, status: string) => {
-  const token = getToken();
-
-  if (!token) {
-    throw new Error("No auth token found");
-  }
-
   const response = await fetch(`${API_BASE_URL}/expenses/${id}/status`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...getAuthHeaders(),
     },
     body: JSON.stringify({ status }),
   });
