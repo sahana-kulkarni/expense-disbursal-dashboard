@@ -1,22 +1,73 @@
-# Enterprise Expense & Disbursal Management Dashboard
+# Enterprise Expense & Disbursal Dashboard
 
-A frontend-heavy full-stack dashboard that supports an expense review workflow (**PENDING → APPROVED/REJECTED**) with a lightweight **Node.js/Express** API.  
-Built to demonstrate production UI patterns: server-state management, conditional actions, loading/error states, and clean architecture.
+A full-stack expense management system that simulates real-world financial workflows with role-based access, approval pipelines, and interactive dashboards.
 
-**Live Demo:** https://expense-disbursal-dashboard.vercel.app
+🔗 Live Demo: https://expense-disbursal-dashboard.vercel.app  
+🔗 Backend API: https://expense-disbursal-dashboard-1.onrender.com  
 
-## Tech Stack
+---
 
-- **Frontend:** React, TypeScript, Tailwind CSS, React Router, React Query, Axios
-- **Backend:** Node.js, Express, CORS
+## Overview
+
+This project is designed to mimic how organizations manage expenses, approvals, and financial tracking.
+
+Users can:
+- Register and log in
+- Create and manage expenses via UI
+- View real-time dashboard insights
+- Approve or reject expenses based on roles
+
+The system ensures a **clean separation of frontend, backend, and data layers**, making it scalable and production-ready.
+
+---
 
 ## Features
 
-- Expense dashboard UI with table view
-- Status workflow: **PENDING → APPROVED / REJECTED**
-- Conditional rendering of actions based on status
-- Server-state management using **React Query** with query invalidation after mutations
-- Filters by status + pagination skeleton (UI)
+### Authentication & Roles
+- User registration & login
+- Role-based access (User / Manager)
+- Managers can approve/reject expenses
+
+### Expense Management
+- Create, update, and view expenses via UI
+- Status flow: `PENDING → APPROVED / REJECTED`
+- Dynamic UI actions based on status
+
+### Dashboard
+- Real-time summary of expenses
+- Status-based insights (Approved, Pending, Rejected)
+- Automatically updates when new expenses are added
+
+### State Management
+- Built using **React Query**
+- Automatic refetch & cache invalidation after mutations
+- Handles loading, error, and empty states gracefully
+
+---
+
+## Tech Stack
+
+### Frontend
+- React + TypeScript
+- Tailwind CSS
+- React Router
+- TanStack React Query
+- Axios
+
+### Backend
+- Node.js + Express
+- REST APIs
+- JWT Authentication (in progress / optional if not added)
+
+### Database
+- PostgreSQL (Neon / local setup)
+- Prisma ORM
+
+### Deployment
+- Frontend: Vercel
+- Backend: Render
+
+---
 
 ## Screenshots
 
@@ -25,10 +76,9 @@ Built to demonstrate production UI patterns: server-state management, conditiona
 - `screenshots/dashboard.png`
 - `screenshots/expenses.png`
 
-## Getting Started
+## ⚙️ Local Setup
 
-### 1) Clone
-
+### 1. Clone the repo
 ```bash
 git clone https://github.com/sahana-kulkarni/expense-disbursal-dashboard.git
 cd expense-disbursal-dashboard
@@ -56,29 +106,19 @@ Frontend runs on: http://localhost:5173
 
 ### API Endpoints
 
-- GET /api/expenses – fetch all expenses
-- PATCH /api/expenses/:id – update expense status
-  Body:
-
-```json
-{ "status": "APPROVED" }
-```
-
----
-
-## Notes
-
-- Backend uses in-memory data storage for simplicity.
-- The project is designed to highlight frontend architecture and workflow handling.
-- Persistent storage, authentication, and server-side pagination are intentionally out of scope.
+- POST /api/auth/register
+- POST /api/auth/login
+- GET /api/expenses
+- POST /api/expenses
+- PATCH /api/expenses/:id/status
 
 ---
 
 ## Why This Project
 
-This project was built to demonstrate real-world frontend engineering practices, including:
+Working in financial workflows at the courts, I wanted to build a system that reflects real-world expense handling, approvals, and data consistency challenges.
 
-- Clean component and folder architecture
-- Clear separation of server state and UI state
-- Controlled UI workflows based on business rules
-- Robust REST API integration with proper loading and error handling
+This project helped me strengthen:
+- Full-stack development skills
+- API design and integration
+- State management and UI synchronization
