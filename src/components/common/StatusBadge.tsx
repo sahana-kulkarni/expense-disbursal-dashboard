@@ -1,17 +1,18 @@
 type Props = {
-  status: "PENDING" | "APPROVED" | "PAID" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED";
 };
 
 const styles: Record<Props["status"], string> = {
-  PENDING: "bg-yellow-100 text-yellow-800",
-  APPROVED: "bg-blue-100 text-blue-800",
-  PAID: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
+  PENDING: "bg-amber-100 text-amber-700",
+  APPROVED: "bg-emerald-100 text-emerald-700",
+  REJECTED: "bg-rose-100 text-rose-700",
 };
 
 export default function StatusBadge({ status }: Props) {
   return (
-    <span className={`x-2 py-1 rounded text-xs font-medium ${styles[status]}`}>
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-cs font-semibold ${styles[status]}`}
+    >
       {status}
     </span>
   );
