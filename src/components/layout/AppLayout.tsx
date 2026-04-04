@@ -3,11 +3,21 @@ import Sidebar from "./Sidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="p-6 overflow-y-auto">{children}</main>
+    <div className="min-h-screen bg-slate-50">
+      <div className="flex min-h-screen">
+        <aside className="hidden w-72 border-r border-slate-200 bg-white lg:block">
+          <Sidebar />
+        </aside>
+
+        <div className="flex min-w-0 fex-1 flex-col">
+          <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+            <Navbar />
+          </header>
+
+          <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">{children}</div>
+          </main>
+        </div>
       </div>
     </div>
   );
