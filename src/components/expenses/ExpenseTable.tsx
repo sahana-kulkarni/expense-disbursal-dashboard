@@ -1,10 +1,24 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useExpenses } from "../../hooks/useExpenses";
 import StatusBadge from "../common/StatusBadge";
 import Loader from "../common/Loader";
 import ExpenseFilters from "./ExpenseFilters";
 import { updateExpenseStatus } from "../../api/expenseApi";
 import { useQueryClient } from "@tanstack/react-query";
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  }).format(value);
+
+const formatDate = (value: string) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
 
 export default function ExpenseTable() {
   const queryClient = useQueryClient();
@@ -14,7 +28,9 @@ export default function ExpenseTable() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const filtered = status ? data?.filter((e) => e.status === status) : data;
+  const filtered = useMemo(() => {
+    return status ? data?.filter((expense) => expense.status === status) : data;
+  }, [data, status]);
 
   const handleStatusChange = async (
     id: string,
@@ -26,7 +42,7 @@ export default function ExpenseTable() {
 
       await updateExpenseStatus(id, status);
 
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["expenses"],
       });
     } catch {
@@ -36,66 +52,136 @@ export default function ExpenseTable() {
     }
   };
 
-  if (isLoading) return <Loader />;
-  if (expenseError)
-    return <p className="text-red-500">Failed to load expenses</p>;
+  if (isLoading) {
+    return (
+      <div className="rounded-2xl border boder-slate-200 bg-white p-8 shadow-sm">
+        <Loader />
+      </div>
+    );
+  }
+  if (expenseError) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        Failed to load expenses
+      </div>
+    );
+  }
 
   return (
-    <>
-      <ExpenseFilters onFilter={setStatus} />
-      <div className="bg-white rounded shadow overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-3 text-left">Title</th>
-              <th className="p-3 text-left">Category</th>
-              <th className="p-3 text-left">Amount</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-left">Created</th>
-              <th className="p-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered?.map((exp) => (
-              <tr key={exp.id} className="border-t">
-                <td className="p-3">{exp.title}</td>
-                <td className="p-3">{exp.category}</td>
-                <td className="p-3">{exp.amount}</td>
-                <td className="p-3">
-                  <StatusBadge status={exp.status} />
-                </td>
-                <td className="p-3">{exp.createdAt}</td>
-                <td className="p-3 flex gap-2">
-                  {exp.status === "PENDING" && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleStatusChange(exp.id, "APPROVED")}
-                        disabled={loadingId === exp.id}
-                        className="px-3 py-1 text-xs bg-green-600 text-white rounded disabled:opacity-50"
-                      >
-                        {loadingId === exp.id ? "Updating..." : "Approve"}
-                      </button>
-
-                      <button
-                        onClick={() => handleStatusChange(exp.id, "REJECTED")}
-                        disabled={loadingId === exp.id}
-                        className="px-3 py-1 text-xs bg-red-600 text-white rounded disabled:opacity-50"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="flex justify-end gap-2 p-3 border-t">
-          <button className="px-3 py-1 border rounded">Prev</button>
-          <button className="px-3 py-1 border rounded">Next</button>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 border-b border-slate-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 className="text-base font-semibold text-slate-900">
+            Expense List
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            View and MAnage submitted expense records.
+          </p>
         </div>
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
+        <div className="w-full sm:w-auto">
+          <ExpenseFilters onFilter={setStatus} />
+        </div>
       </div>
-    </>
+
+      {error && (
+        <div className="mx-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {filtered?.length === 0 ? (
+        <div className="px-4 pb-6">
+          <div className="rounded-2xl border border-dashed boder-slate-300 bg-slate-50 px-6 py-12 text-center">
+            <h4 className="text-base font-semibold text-slate-900">
+              No expenses found
+            </h4>
+            <p className="mt-2 text-sm text-slate-500">
+              Try changing the filter or add a new expense to see records here.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="bg-slate-50">
+              <tr className="border-y border-slate-200 text-left">
+                <th className="px-4 py-3 font-semibold text-slate-600">
+                  Title
+                </th>
+                <th className="px-4 py-3 font-semibold text-slate-600">
+                  Amount
+                </th>
+                <th className="px-4 py-3 font-semibold text-slate-600">
+                  Status
+                </th>
+                <th className="px-4 py-3 font-semibold text-slate-600">
+                  Created
+                </th>
+                <th className="px-4 py-3 font-semibold text-slate-600">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filtered?.map((exp) => (
+                <tr
+                  key={exp.id}
+                  className="border-b boder-slate-100 transition hover:bg-slate-50/70"
+                >
+                  <td className="px-4 py-4">
+                    <div className="font-medium text-slate-900">
+                      {exp.title}
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      Expense ID: {exp.id.slice(0, 8)}
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-4 ffont-medium text-slate-900">
+                    {formatCurrency(exp.amount)}
+                  </td>
+
+                  <td className="px-4 py-4">
+                    <StatusBadge status={exp.status} />
+                  </td>
+
+                  <td className="px-4 py-4 text-slate-600">
+                    {formatDate(exp.createdAt)}
+                  </td>
+
+                  <td className="px-4 py-4">
+                    {exp.status === "PENDING" ? (
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleStatusChange(exp.id, "APPROVED")}
+                          disabled={loadingId === exp.id}
+                          className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {loadingId === exp.id ? "Updating..." : "Approve"}
+                        </button>
+
+                        <button
+                          onClick={() => handleStatusChange(exp.id, "REJECTED")}
+                          disabled={loadingId === exp.id}
+                          className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-xxs font-medium text-slate-400">
+                        No actions available
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }
