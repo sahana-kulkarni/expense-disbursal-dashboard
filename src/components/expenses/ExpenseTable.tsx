@@ -75,7 +75,7 @@ export default function ExpenseTable() {
             Expense List
           </h3>
           <p className="mt-1 text-sm text-slate-500">
-            View and MAnage submitted expense records.
+            View and Manage submitted expense records.
           </p>
         </div>
 
