@@ -71,8 +71,8 @@ The system ensures a **clean separation of frontend, backend, and data layers**,
 
 ## Screenshots
 
-- screenshots/dashboard.png
-- screenshots/expenses.png
+- ![Dashboard](screenshots/dashboard.png)
+- ![Expenses](screenshots/expenses.png)
 
 ## ⚙️ Local Setup
 
