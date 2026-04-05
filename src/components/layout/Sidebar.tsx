@@ -28,7 +28,7 @@ export default function Sidebar() {
               Finance Suite
             </p>
             <h2 className="text-base font-semibold tracking-tight text-slate-900">
-              Expense Flow
+              ExpenseFlow
             </h2>
           </div>
         </div>
