@@ -1,6 +1,6 @@
-# Enterprise Expense & Disbursal Dashboard
+# Enterprise Expense & Disbursal Management Dashboard
 
-A full-stack expense management system that simulates real-world financial workflows with role-based access, approval pipelines, and interactive dashboards.
+A full-stack workflow system for managing expense approvals, role-based actions, and financial disbursals with a focus on performance and real-world workflows.
 
 🔗 Live Demo: https://expense-disbursal-dashboard.vercel.app  
 🔗 Backend API: https://expense-disbursal-dashboard-1.onrender.com  
@@ -71,10 +71,8 @@ The system ensures a **clean separation of frontend, backend, and data layers**,
 
 ## Screenshots
 
-> Add 1–2 screenshots here (Dashboard + Expenses table)
-
-- `screenshots/dashboard.png`
-- `screenshots/expenses.png`
+- screenshots/dashboard.png
+- screenshots/expenses.png
 
 ## ⚙️ Local Setup
 
